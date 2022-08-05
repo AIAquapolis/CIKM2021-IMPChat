@@ -11,6 +11,7 @@ import time
 
 task_dic = {
     'reddit':'./dataset/reddit/',
+    'reddit2':'./dataset/reddit2/',
     'weibo': './dataset/weibo/'
 }
 
@@ -122,7 +123,7 @@ else:
     args.save_path += args.model_file_name
 args.type_file = task_dic[args.task] + 'test.type'
 
-args.score_file_path = task_dic[args.task] + args.score_file_path + IMPChat.__name__
+args.score_file_path = task_dic[args.task] + args.score_file_path + IMPChat.__name__ + '.'+ts
 
 print(args)
 print("Task: ", args.task)

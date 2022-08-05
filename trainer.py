@@ -7,6 +7,7 @@ import sys
 import logging
 import time
 
+# 森谷: typefileがないので、関連コードをコメントアウトする。ndcgとある指標が計算できなくなる
 from metrics import Metrics
 from tqdm import tqdm
 
@@ -61,7 +62,8 @@ class Trainer:
             loss = loss.mean()
         loss.backward()
         self.optimizer.step()
-        print('Batch[{}] - loss: {:.6f}  batch_size:{}'.format(i, loss.item(), batch_y.size(0)) )  # , accuracy, corrects
+        if i % 500 == 0:
+            print('Batch[{}] - loss: {:.6f}  batch_size:{}'.format(i, loss.item(), batch_y.size(0)) )  # , accuracy, corrects
         return loss
 
 
@@ -129,15 +131,15 @@ class Trainer:
         log.info(f"Evaluation Result: \n " \
         f"MAP:{result[0]}\tMRR:{result[1]}\t" \
         f"P@1:{result[2]}\tR1:{result[3]}\t" \
-        f"R2:{result[4]}\tR5:{result[5]}"\
-        f"ndcg: {result[6]}")
+        f"R2:{result[4]}\tR5:{result[5]}")
+        #f"ndcg: {result[6]}")
 
         if not is_test and result[3] + result[4] + result[5] > self.best_result[3] + self.best_result[4] + self.best_result[5]:
             log.info(f"Best Result: \n " \
             f"MAP:{self.best_result[0]}\tMRR:{self.best_result[1]}\t" \
             f"P@1:{self.best_result[2]}\tR1:{self.best_result[3]}\t" \
-            f"R2:{self.best_result[4]}\tR5:{self.best_result[5]}"\
-            f"ndcg: {result[6]}")
+            f"R2:{self.best_result[4]}\tR5:{self.best_result[5]}")
+            #f"ndcg: {result[6]}")
             self.patience = 0
             self.best_result = result
             torch.save(get_model_obj(self.model).state_dict(), self.args.save_path)

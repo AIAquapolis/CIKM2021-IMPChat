@@ -129,3 +129,11 @@ dmypy.json
 .pyre/
 log/*
 checkpoint/*
+
+dataset
+gitignore
+*.pkl
+*.ipynb
+*.pkl_debugout.txt
+tmp*
+*~

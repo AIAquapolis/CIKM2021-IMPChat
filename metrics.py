@@ -2,7 +2,7 @@ import numpy as np
 import json
 from collections import Counter
 np.random.seed(0)
-
+# 森谷: typefileがないので、関連コードをコメントアウトする。ndcgとある指標が計算できなくなる
 class Metrics(object):
 
     def __init__(self, score_file_path:str, type_file_path: str):
@@ -16,19 +16,19 @@ class Metrics(object):
         session_text = []
         one_sess = []
         one_sess_text = []
-        candidate_type = json.loads(open(self.type_file_path).read())
+        #candidate_type = json.loads(open(self.type_file_path).read())
         with open(score_file_path, 'r') as infile:
             i = 0
             for line in infile.readlines():
                 tokens = line.strip().split('\t')
                 one_sess.append((float(tokens[0]), int(tokens[1])))
-                one_sess_text.append([candidate_type[0][i], candidate_type[1][i], float(tokens[0])])
+                #one_sess_text.append([candidate_type[0][i], candidate_type[1][i], float(tokens[0])])
                 i += 1
                 if i % self.segment == 0:
                     one_sess_tmp = np.array(one_sess)
                     if one_sess_tmp[:, 1].sum() > 0:
                         sessions.append(one_sess)
-                        session_text.append(one_sess_text)
+                        #session_text.append(one_sess_text)
                     one_sess = []
                     one_sess_text = []
         return sessions, session_text
@@ -100,18 +100,18 @@ class Metrics(object):
         sum_r_1 = 0
         sum_r_2 = 0
         sum_r_5 = 0
-        sum_ndcg = 0
+        #sum_ndcg = 0
 
         sessions, session_text = self.__read_socre_file(self.score_file_path)
         total_s = len(sessions)
-        predict_answer = []
+        #predict_answer = []
         for i, session in enumerate(sessions):
             m_a_p, m_r_r, p_1, r_1, r_2, r_5 = self.evaluation_one_session(session)
-            true_labels = [s[1] for s in session_text[i]]
-            scores = [s[-1] for s in session_text[i]]
-            ndcg = self.cal_ndcg(true_labels, scores, n=5)
-            best_answer = max(session_text[i], key=lambda x: x[-1])[0]
-            predict_answer.append(best_answer)
+            #true_labels = [s[1] for s in session_text[i]]
+            #scores = [s[-1] for s in session_text[i]]
+            #ndcg = self.cal_ndcg(true_labels, scores, n=5)
+            #best_answer = max(session_text[i], key=lambda x: x[-1])[0]
+            #predict_answer.append(best_answer)
 
             sum_m_a_p += m_a_p
             sum_m_r_r += m_r_r
@@ -119,14 +119,15 @@ class Metrics(object):
             sum_r_1 += r_1
             sum_r_2 += r_2
             sum_r_5 += r_5
-            sum_ndcg += ndcg
+            #sum_ndcg += ndcg
         return (sum_m_a_p/total_s,
                 sum_m_r_r/total_s,
                   sum_p_1/total_s,
                   sum_r_1/total_s,
                   sum_r_2/total_s,
                   sum_r_5/total_s,
-                  sum_ndcg/total_s)
+                  #sum_ndcg/total_s)
+               )
 
 
 if __name__ == '__main__':
