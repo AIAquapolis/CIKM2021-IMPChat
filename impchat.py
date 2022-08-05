@@ -143,7 +143,7 @@ class IMPChat(nn.Module):
         self.cnn_2d_6 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=(3,3))
 
         if args.max_words == 200:
-
+            pass
 
         self.affine2 = nn.Linear(in_features=3*3*64, out_features=args.emb_len)
         self.affine3 = nn.Linear(in_features=3*3*64, out_features=args.emb_len)
