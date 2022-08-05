@@ -370,7 +370,11 @@ class IMPChat(nn.Module):
 
         Z = Z.view(Z.size(0), -1)  # (bsz*max_utterances, *)
 
-        V = self.tanh(self.affine3(Z))   # (bsz*max_utterances, 200)
+        print('psm')
+        print(Z.size())
+        a=self.affine3(Z)
+        print(a.size())
+        V = self.tanh(a)   # (bsz*max_utterances, 200)
         return V
 
 
