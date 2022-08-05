@@ -95,7 +95,7 @@ class IMPChat(nn.Module):
         super(IMPChat, self).__init__()
         self.word_embedding = nn.Embedding(num_embeddings=len(word_embeddings), embedding_dim=args.emb_len, padding_idx=0,
                                            _weight=torch.FloatTensor(word_embeddings))
-        
+
         self.alpha =  nn.Parameter(torch.tensor(0.5))
         self.n_layer = args.n_layer
         self.max_hop = args.max_hop
@@ -186,8 +186,9 @@ class IMPChat(nn.Module):
         dk = torch.sqrt(torch.Tensor([self.args.emb_len])).cuda()
         A = torch.tanh(torch.einsum("blrd,ddh,bud->blruh", context, self.W_word, key)/dk)
         A = torch.einsum("blruh,hp->blrup", A, self.v).squeeze()   # b x l x u x u
-
-        a = torch.cat([A.max(dim=2)[0], A.max(dim=3)[0]], dim=-1) # b x l x 2u
+        a1=A.max(dim=2)[0]
+        a2=A.max(dim=3)[0]
+        a = torch.cat([a1, a2], dim=-1) # b x l x 2u
         s1 = torch.softmax(self.linear_word(a).squeeze(), dim=-1)  # b x l
         return s1
 
@@ -221,7 +222,7 @@ class IMPChat(nn.Module):
         context_ = posts.reshape(-1, su3, su4)   # (batch_size*max_utterances, max_u_words, embedding_dim)
         context_ = self.selector_transformer(context_, context_, context_)
         context_ = context_.view(su1, su2, su3, su4)
-        
+
         multi_match_score = []
         key_list = []
         index_cache = []
@@ -239,7 +240,7 @@ class IMPChat(nn.Module):
                     max_index = max_indice[i]
                     batch_keys.append(posts[i, max_index,:,:])
                 key_list.append(torch.stack(batch_keys, dim=0).unsqueeze(1))
-                key = torch.cat(key_list, dim=1).mean(dim=1) 
+                key = torch.cat(key_list, dim=1).mean(dim=1)
 
             key = self.selector_transformer(key, key, key)
             s1 = self.word_selector(key, context_)
@@ -323,7 +324,7 @@ class IMPChat(nn.Module):
 
         res_stack.append(bR_embedding.unsqueeze(dim=1).repeat(1, sp2, 1, 1).view(-1, sr2, sr3))
         q_stack.append(query_emb.unsqueeze(dim=1).repeat(1, sp2, 1, 1).view(-1, sr2, sr3))
-        
+
         pre_res_stack.append(pre_res_emb)
         pre_p_stack.append(pre_pos_emb)
 
@@ -354,7 +355,7 @@ class IMPChat(nn.Module):
 
         M = torch.einsum(
             'bcid,bcjd->bcij',(res_stack, pre_res_stack)) / torch.sqrt(torch.tensor(200.0)) # bs*14 x 7 x maxlen x maxlen
-        
+
         Z = self.relu(self.cnn_2d_4(M))
         Z = self.maxpooling1(Z)
 
@@ -369,7 +370,7 @@ class IMPChat(nn.Module):
         V = self.tanh(self.affine3(Z))   # (bsz*max_utterances, 200)
         return V
 
-        
+
     def post_aware_personalized_preference_matching(self, bU_embedding, bR_embedding):
         multi_context = self.context_selector(bU_embedding, max_hop=self.max_hop)
         su1, su2, su3, su4 = multi_context.size()
@@ -384,7 +385,7 @@ class IMPChat(nn.Module):
         self.gru_acc.flatten_parameters()
         H, _ = self.gru_acc(V)  # (bsz, max_utterances, rnn2_hidden)
         return H
-        
+
 
     def forward(self, bU, bR):
         '''
@@ -393,12 +394,12 @@ class IMPChat(nn.Module):
         :return: scores, size: (batch_size, )
         '''
 
-        bU_embedding = self.word_embedding(bU) 
-        bR_embedding = self.word_embedding(bR) 
+        bU_embedding = self.word_embedding(bU)
+        bR_embedding = self.word_embedding(bR)
         su1, su2, su3, su4 = bU_embedding.size()
         g_s = self.personalized_style_matching(bU_embedding, bR_embedding)
         g_s = g_s.view(su1, su2 // 2, -1)
-        
+
         g_p = self.post_aware_personalized_preference_matching(bU_embedding, bR_embedding)
 
         L1 = self.dropout(self.attention(g_s).squeeze(-1))
@@ -406,9 +407,7 @@ class IMPChat(nn.Module):
 
         context_matching = self.affine_out(torch.cat([L1,L2], dim=-1))
         return context_matching.squeeze()
-        
+
     def load_model(self, path):
         self.load_state_dict(state_dict=torch.load(path))
         if torch.cuda.is_available(): self.cuda()
-
-
