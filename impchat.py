@@ -144,6 +144,7 @@ class IMPChat(nn.Module):
 
 
         if args.max_words == 200:
+            self.cnn_2d_8 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=(4,4))
             self.cnn_2d_7 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=(4,4))
             self.maxpooling4 = nn.MaxPool2d(kernel_size=(4, 4), stride=(4, 4))
 
@@ -313,6 +314,12 @@ class IMPChat(nn.Module):
         print(Z.size())
         Z =self.maxpooling3(Z)
         print(Z.size())
+
+        if self.args.max_words == 200:
+            Z = self.relu(self.cnn_2d_8(Z))
+            print(Z.size())
+            Z =self.maxpooling4(Z)
+            print(Z.size())
 
         Z = Z.view(Z.size(0), -1)  # (bsz*max_utterances, *)
 
