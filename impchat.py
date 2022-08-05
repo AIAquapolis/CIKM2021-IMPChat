@@ -298,7 +298,7 @@ class IMPChat(nn.Module):
         M = self.get_Matching_Map(bU_embedding, bR_embedding)
 
         print('urm')
-        print(Z.size())
+        print(M.size())
         Z = self.relu(self.cnn_2d_1(M))
         print(Z.size())
         Z = self.maxpooling1(Z)
