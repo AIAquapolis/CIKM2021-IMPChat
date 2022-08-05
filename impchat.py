@@ -297,14 +297,22 @@ class IMPChat(nn.Module):
         '''
         M = self.get_Matching_Map(bU_embedding, bR_embedding)
 
+        print('urm')
+        print(Z.size())
         Z = self.relu(self.cnn_2d_1(M))
+        print(Z.size())
         Z = self.maxpooling1(Z)
+        print(Z.size())
 
         Z = self.relu(self.cnn_2d_2(Z))
+        print(Z.size())
         Z =self.maxpooling2(Z)
+        print(Z.size())
 
         Z = self.relu(self.cnn_2d_3(Z))
+        print(Z.size())
         Z =self.maxpooling3(Z)
+        print(Z.size())
 
         Z = Z.view(Z.size(0), -1)  # (bsz*max_utterances, *)
 
@@ -363,32 +371,33 @@ class IMPChat(nn.Module):
         M = torch.einsum(
             'bcid,bcjd->bcij',(res_stack, pre_res_stack)) / torch.sqrt(torch.tensor(200.0)) # bs*14 x 7 x maxlen x maxlen
 
-        print('psm')
+        # print('psm')
         Z = self.relu(self.cnn_2d_4(M))
-        print(Z.size())
+        # print(Z.size())
         Z = self.maxpooling1(Z)
-        print(Z.size())
+        # print(Z.size())
 
         Z = self.relu(self.cnn_2d_5(Z))
-        print(Z.size())
+        # print(Z.size())
         Z =self.maxpooling2(Z)
-        print(Z.size())
+        # print(Z.size())
 
         Z = self.relu(self.cnn_2d_6(Z))
-        print(Z.size())
+        # print(Z.size())
         Z =self.maxpooling3(Z)
-        print(Z.size())
+        # print(Z.size())
 
-        Z = self.relu(self.cnn_2d_7(Z))
-        print(Z.size())
-        Z =self.maxpooling4(Z)
-        print(Z.size())
+        if self.args.max_words == 200:
+            Z = self.relu(self.cnn_2d_7(Z))
+            # print(Z.size())
+            Z =self.maxpooling4(Z)
+            # print(Z.size())
 
         Z = Z.view(Z.size(0), -1)  # (bsz*max_utterances, *)
 
-        print(Z.size())
+        # print(Z.size())
         a=self.affine3(Z)
-        print(a.size())
+        # print(a.size())
         V = self.tanh(a)   # (bsz*max_utterances, 200)
         return V
 
