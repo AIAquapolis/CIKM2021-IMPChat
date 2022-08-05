@@ -184,6 +184,8 @@ class IMPChat(nn.Module):
         :return: score:
         '''
         dk = torch.sqrt(torch.Tensor([self.args.emb_len])).cuda()
+        for vec in [context,self.W_word,key,self.v]:
+            print(vec.size())
         A = torch.tanh(torch.einsum("blrd,ddh,bud->blruh", context, self.W_word, key)/dk)
         A = torch.einsum("blruh,hp->blrup", A, self.v).squeeze()   # b x l x u x u
         a1=A.max(dim=2)[0]
