@@ -298,28 +298,28 @@ class IMPChat(nn.Module):
         '''
         M = self.get_Matching_Map(bU_embedding, bR_embedding)
 
-        print('urm')
-        print(M.size())
+        # print('urm')
+        # print(M.size())
         Z = self.relu(self.cnn_2d_1(M))
-        print(Z.size())
+        # print(Z.size())
         Z = self.maxpooling1(Z)
-        print(Z.size())
+        # print(Z.size())
 
         Z = self.relu(self.cnn_2d_2(Z))
-        print(Z.size())
+        # print(Z.size())
         Z =self.maxpooling2(Z)
-        print(Z.size())
+        # print(Z.size())
 
         Z = self.relu(self.cnn_2d_3(Z))
-        print(Z.size())
+        # print(Z.size())
         Z =self.maxpooling3(Z)
-        print(Z.size())
+        # print(Z.size())
 
         if self.args.max_words == 200:
             Z = self.relu(self.cnn_2d_8(Z))
-            print(Z.size())
+            # print(Z.size())
             Z =self.maxpooling4(Z)
-            print(Z.size())
+            # print(Z.size())
 
         Z = Z.view(Z.size(0), -1)  # (bsz*max_utterances, *)
 
