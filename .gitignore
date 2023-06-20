@@ -133,7 +133,7 @@ checkpoint/*
 dataset
 gitignore
 *.pkl
-*.ipynb
+#*.ipynb
 *.pkl_debugout.txt
 tmp*
 *~

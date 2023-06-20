@@ -64,6 +64,7 @@ class Trainer:
         self.optimizer.step()
         if i % 500 == 0:
             print('Batch[{}] - loss: {:.6f}  batch_size:{}'.format(i, loss.item(), batch_y.size(0)) )  # , accuracy, corrects
+            log.info('Batch[{}] - loss: {:.6f}  batch_size:{}'.format(i, loss.item(), batch_y.size(0)) )  # , accuracy, corrects
         return loss
 
 
@@ -74,6 +75,7 @@ class Trainer:
 
         for epoch in range(self.args.epochs):
             print("\nEpoch ", epoch+1, "/", self.args.epochs)
+            log.info(f"\nEpoch {epoch+1}/{self.args.epochs}")
             avg_loss = 0
 
             self.model.train()
@@ -97,6 +99,7 @@ class Trainer:
                 avg_loss += loss.item()
             cnt = len(self.y_train) // self.args.batch_size + 1
             print("Average loss:{:.6f} ".format(avg_loss/cnt))
+            log.info("Average loss:{:.6f} ".format(avg_loss/cnt))
             self.evaluate()
 
 
@@ -116,6 +119,7 @@ class Trainer:
             param_group['lr'] = param_group['lr'] * decay_rate
             self.args.learning_rate = param_group['lr']
         print("Decay learning rate to: ", self.args.learning_rate)
+        log.info("Decay learning rate to: ", self.args.learning_rate)
 
 
     def evaluate(self, is_test=False):
@@ -144,6 +148,7 @@ class Trainer:
             self.best_result = result
             torch.save(get_model_obj(self.model).state_dict(), self.args.save_path)
             print("save model!!!\n")
+            log.info("save model!!!\n")
         else:
             self.patience += 1
 

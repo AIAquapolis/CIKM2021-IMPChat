@@ -137,9 +137,38 @@ class MyDataParallel(torch.nn.DataParallel):
 
 def train_model():
     path = task_dic[args.task]
-    X_train_utterances, X_train_responses, y_train = pickle.load(file=open(path+f"train_{args.task}.pkl", 'rb')) 
-    X_dev_utterances, X_dev_responses, y_dev = pickle.load(file=open(path+f"dev_{args.task}.pkl", 'rb')) 
-    vocab, word_embeddings = pickle.load(file=open(path + "vocab_and_embeddings.pkl", 'rb'))
+
+    #X_train_utterances, X_train_responses, y_train = pickle.load(file=open(path+f"train_{args.task}.pkl", 'rb')) 
+    #X_dev_utterances, X_dev_responses, y_dev = pickle.load(file=open(path+f"dev_{args.task}.pkl", 'rb')) 
+    #vocab, word_embeddings = pickle.load(file=open(path + "vocab_and_embeddings.pkl", 'rb'))
+    
+    #train_reddit_nfl_minill3_min20_top3000.pkl
+    #train_reddit_politics_minill3_min20.pkl
+    #train_reddit_politics_minill3_min30.pkl
+    #test_reddit_nfl_minill3_min20_top3000.pkl
+    #test_reddit_politics_minill3_min20.pkl
+    #test_reddit_politics_minill3_min30.pkl
+    #dev_reddit_nfl_minill3_min20_top3000.pkl
+    #dev_reddit_politics_minill3_min20.pkl
+    #dev_reddit_politics_minill3_min30.pkl
+    #vocab_and_embeddings_nfl_minill3_min20_top3000.pkl
+    #vocab_and_embeddings_politics_minill3_min20.pkl
+    #vocab_and_embeddings_politics_minill3_min30.pkl
+
+    #task_name = "_nfl_minill3_min20_top3000"
+    #task_name = "_nfl_minill3_min20_all"
+    #task_name = "_nfl_minill3_min20_all_lc10"
+    task_name = "_nfl_minill3_min20_top3000_lc10"
+    #task_name = "_nfl_minill3_min20_all_lc10_slide20"
+    #task_name = "_politics_minill3_min20_all_lc10"
+    #task_name = "_politics_minill3_min20_top500_lc10"
+    #task_name = "_politics_minill3_min20_all_lc10"
+    #task_name = "_politics_minill3_min20"
+    #task_name = "_politics_minill3_min30"
+    
+    X_train_utterances, X_train_responses, y_train = pickle.load(file=open(path+f"train_{args.task}{task_name}.pkl", 'rb')) 
+    X_dev_utterances, X_dev_responses, y_dev = pickle.load(file=open(path+f"dev_{args.task}{task_name}.pkl", 'rb')) 
+    vocab, word_embeddings = pickle.load(file=open(path + f"vocab_and_embeddings{task_name}.pkl", 'rb'))
 
     model = IMPChat(word_embeddings, args=args) 
     train_dataset = DialogueDataset(X_train_utterances, X_train_responses, y_train)
@@ -155,8 +184,23 @@ def train_model():
 
 def test_model():
     path = task_dic[args.task]
-    X_dev_utterances, X_dev_responses, y_dev = pickle.load(file=open(path+f"test_{args.task}.pkl", 'rb'))
-    vocab, word_embeddings = pickle.load(file=open(path + "vocab_and_embeddings.pkl", 'rb'))
+    print(path)
+    #X_dev_utterances, X_dev_responses, y_dev = pickle.load(file=open(path+f"test_{args.task}.pkl", 'rb'))
+    #vocab, word_embeddings = pickle.load(file=open(path + "vocab_and_embeddings.pkl", 'rb'))
+    
+    #task_name = "_nfl_minill3_min20_top3000"
+    #task_name = "_nfl_minill3_min20_all"
+    #task_name = "_nfl_minill3_min20_all_lc10"
+    task_name = "_nfl_minill3_min20_top3000_lc10"
+    #task_name = "_nfl_minill3_min20_all_lc10_slide20"
+    #task_name = "_politics_minill3_min20"
+    #task_name = "_politics_minill3_min20_all_lc10"
+    #task_name = "_politics_minill3_min20_top500_lc10"
+    #task_name = "_politics_minill3_min20_all_lc10"
+    #task_name = "_politics_minill3_min30"
+    
+    X_dev_utterances, X_dev_responses, y_dev = pickle.load(file=open(path+f"test_{args.task}{task_name}.pkl", 'rb'))
+    vocab, word_embeddings = pickle.load(file=open(path + f"vocab_and_embeddings{task_name}.pkl", 'rb'))
 
     model = IMPChat(word_embeddings, args=args) 
     model.load_model(args.save_path)
@@ -174,7 +218,7 @@ if __name__ == '__main__':
         test_model()
     end = time.time()
     print("use time: ", (end-start)/60, " min")
+    print("done")
 
-
-
+    
 

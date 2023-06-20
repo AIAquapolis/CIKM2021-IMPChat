@@ -230,7 +230,6 @@ class IMPChat(nn.Module):
         context_ = posts.reshape(-1, su3, su4)   # (batch_size*max_utterances, max_u_words, embedding_dim)
         context_ = self.selector_transformer(context_, context_, context_)
         context_ = context_.view(su1, su2, su3, su4)
-
         multi_match_score = []
         key_list = []
         index_cache = []
@@ -261,7 +260,6 @@ class IMPChat(nn.Module):
                         max_indice[i] = k
                         index_cache[i].append(k)
                         break
-
             s = s.unsqueeze(-1).repeat(1,1,2).view(su1,-1)[:,:-1]
             multi_match_score.append(s)
         multi_match_score = torch.stack(multi_match_score, dim=-1)
